@@ -1,0 +1,4 @@
+build/
+USPTO_Pymongo_Example_Project.egg-info/
+*.pyc
+*/*.pyc
