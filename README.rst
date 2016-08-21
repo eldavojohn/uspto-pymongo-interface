@@ -5,14 +5,10 @@ This is a sample project for a friend.
 
 In order to run the test, you can use
 
-``` shell
-nosetests
-```
+    nosetests
 
 In order to see the output from your tests run the tests without hiding stdout:
 
-``` shell
-nosetests --nocapture
-```
+    nosetests --nocapture
 
 I believe you can also use --pdb to drop into a debugger on exceptions.
