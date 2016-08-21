@@ -12,5 +12,8 @@ class AdvancedTestSuite(unittest.TestCase):
     def test_patent_crawl(self):
         uspto.crawl_patents_with_aggregate()
 
+    def test_map_reduce_to_state(self):
+        uspto.map_reduce_applicant_by_state()
+
 if __name__ == '__main__':
     unittest.main()
