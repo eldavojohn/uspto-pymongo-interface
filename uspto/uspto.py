@@ -20,19 +20,21 @@ def crawl_patents_with_aggregate():
         {"$sort": SON([("count", -1), ("_id", -1)])} # finally we put the highest values first in our output array
     ]
     result = patent_collection.aggregate(pipeline)
-    print result.inspect
+    for doc in result:
+        print(doc)
+    return result
 
 def map_reduce_applicant_by_state():
     patent_collection = get_collection()
     # obvious problem here is that multiple applicants mean that it's not per patent, it's per applicant per patent
     mapToState = Code("""
         function () {
-            if(this.us_bibliographic_data_grant && this.us_bibliographic_data_grant.parties && us_bibliographic_data_grant.applicants && us_bibliographic_data_grant.applicants.applicant && us_bibliographic_data_grant.applicants.applicant.length > 0) {
+            if(this.us_bibliographic_data_grant && this.us_bibliographic_data_grant.parties && this.us_bibliographic_data_grant.applicants && this.us_bibliographic_data_grant.applicants.applicant && this.us_bibliographic_data_grant.applicants.applicant.length > 0) {
                 this.us_bibliographic_data_grant.applicants.applicant.forEach(function (applicant) {
                     if(applicant && applicant.addressbook && applicant.addressbook.address && applicant.addressbook.address.state) {
                         emit(applicant.addressbook.address.state, 1);
                     }
-                })
+                });
             }
         }
         """)
@@ -45,5 +47,7 @@ def map_reduce_applicant_by_state():
             return total;
         }
         """)
-    result = patent_collection.map_reduce(mapper, reducer, "myresults")
-    print result.inspect
+    result = patent_collection.map_reduce(mapToState, toStateReducer, "myresults")
+    for doc in result:
+        print(doc)
+    return result
