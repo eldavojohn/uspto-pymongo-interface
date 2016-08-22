@@ -29,12 +29,14 @@ def map_reduce_applicant_by_state():
     # obvious problem here is that multiple applicants mean that it's not per patent, it's per applicant per patent
     mapToState = Code("""
         function () {
-            if(this.us_bibliographic_data_grant && this.us_bibliographic_data_grant.parties && this.us_bibliographic_data_grant.applicants && this.us_bibliographic_data_grant.applicants.applicant && this.us_bibliographic_data_grant.applicants.applicant.length > 0) {
-                this.us_bibliographic_data_grant.applicants.applicant.forEach(function (applicant) {
+            if(this.us_bibliographic_data_grant && this.us_bibliographic_data_grant.parties && this.us_bibliographic_data_grant.parties.applicants && this.us_bibliographic_data_grant.parties.applicants.applicant && this.us_bibliographic_data_grant.parties.applicants.applicant.constructor == Array) {
+                this.us_bibliographic_data_grant.parties.applicants.applicant.forEach(function (applicant) {
                     if(applicant && applicant.addressbook && applicant.addressbook.address && applicant.addressbook.address.state) {
                         emit(applicant.addressbook.address.state, 1);
                     }
                 });
+            } else if (this.us_bibliographic_data_grant && this.us_bibliographic_data_grant.parties && this.us_bibliographic_data_grant.parties.applicants && this.us_bibliographic_data_grant.parties.applicants.applicant && this.us_bibliographic_data_grant.parties.applicants.applicant.addressbook) {
+                emit(this.us_bibliographic_data_grant.parties.applicants.applicant.addressbook.address.state, 1);
             }
         }
         """)
